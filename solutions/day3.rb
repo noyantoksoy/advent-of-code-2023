@@ -45,6 +45,51 @@ class Day3 < Solution
     part_numbers.sum
   end
 
+  def solve_part2
+    sum_gear_ratio = 0
+    hash_of_numbers = @input.map { |line| get_hash_from_line(line) }
+    @input.each_with_index do |line, index|
+      symbols = line.enum_for(:scan, /[^.\d]/).map { Regexp.last_match.begin(0) }
+      next if symbols.empty? # Doesn't affect any lines
+
+      lines_to_affect = (index - 1..index + 1).to_a.filter { |i| i >= 0 && i < @input.length }
+      symbols.each do |symbol_index|
+        no_of_numbers_afffected_by_symbol = 0
+        part_numbers = []
+        lines_to_affect.each do |affected_line|
+          numbers_hash = hash_of_numbers[affected_line]
+          check_symbol = symbol_index - 1
+          while check_symbol <= symbol_index + 1
+            if numbers_hash.key?(check_symbol)
+              number_to_add = numbers_hash[check_symbol]
+              part_numbers << number_to_add
+              no_of_numbers_afffected_by_symbol += 1
+              # part number added, remove it from hash to avoid duplicates
+              # must also remove adjacent numbers
+              start_index = check_symbol
+              # move right
+              while numbers_hash.key?(start_index)
+                numbers_hash.delete(start_index)
+                start_index += 1
+              end
+              # move left
+              start_index = check_symbol - 1
+              while numbers_hash.key?(start_index)
+                numbers_hash.delete(start_index)
+                start_index -= 1
+              end
+            end
+            check_symbol += 1
+          end
+        end
+        if no_of_numbers_afffected_by_symbol == 2
+          sum_gear_ratio += part_numbers.reduce(:*)
+        end
+      end
+    end
+    sum_gear_ratio
+  end
+
   private
 
   def get_hash_from_line(line)
