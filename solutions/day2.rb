@@ -2,7 +2,7 @@
 
 require_relative 'base'
 
-# Day 1 solution
+# Day 2 solution
 class Day2 < Solution
   def initialize(red:, green:, blue:)
     super
