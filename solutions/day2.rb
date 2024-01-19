@@ -22,27 +22,40 @@ class Day2 < Solution
         'blue' => 0
       }
       game = parse_input(line)
-      puts "Game #{game.id}"
       valid_game = catch(:done) do
         game.reveals.reduce(true) do |valid, reveal|
-          puts "Reveal: #{reveal.red} red, #{reveal.green} green, #{reveal.blue} blue"
-          revealed_cubes['red'] += reveal.red
-          revealed_cubes['green'] += reveal.green
-          revealed_cubes['blue'] += reveal.blue
+          revealed_cubes['red'] = reveal.red
+          revealed_cubes['green'] = reveal.green
+          revealed_cubes['blue'] = reveal.blue
 
           # check if we have enough cubes
           valid_reveal = revealed_cubes.none? do |color, count|
-            count >= @available_cubes[color]
+            count > @available_cubes[color]
           end
-          puts "Valid reveal: #{valid_reveal}"
           throw(:done, false) unless valid && valid_reveal
           valid && valid_reveal
         end
       end
-      puts '---------------------'
       sum_of_ids += game.id if valid_game
     end
     sum_of_ids
+  end
+
+  def solve_part2
+    @input.reduce(0) do |sum, line|
+      revealed_cubes = {
+        'red' => 0,
+        'green' => 0,
+        'blue' => 0
+      }
+      game = parse_input(line)
+      game.reveals.each do |reveal|
+        revealed_cubes['red'] = reveal.red if reveal.red > revealed_cubes['red']
+        revealed_cubes['green'] = reveal.green if reveal.green > revealed_cubes['green']
+        revealed_cubes['blue'] = reveal.blue if reveal.blue > revealed_cubes['blue']
+      end
+      sum + revealed_cubes.values.reduce(:*)
+    end
   end
 
   private

@@ -9,7 +9,12 @@ class Day2Test < Minitest::Test
 
     it 'should solve part1' do
       subject.input = File.readlines('test/inputs/day2.txt').map(&:chomp)
-      assert_equal 346, subject.solve_part1
+      assert_equal 2776, subject.solve_part1
+    end
+
+    it 'should solve part2' do
+      subject.input = File.readlines('test/inputs/day2.txt').map(&:chomp)
+      assert_equal 68638, subject.solve_part2
     end
   end
 end
